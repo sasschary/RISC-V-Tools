@@ -14,9 +14,7 @@ export default class RiscVDisassembler {
 
         // Read the instruction into a Uint32Array so we can easily interact with individual bits
         const instruction: Uint32Array = new Uint32Array(32);
-        // TODO: Find better solution than just ts-ignore'ing the type error
-        // @ts-ignore
-        instruction.set(Uint32Array.from((parseInt(instr, 16).toString(2)).padStart(32, '0')));
+        instruction.set(Uint32Array.from((parseInt(instr, 16).toString(2)).padStart(32, '0') as Iterable<number>));
 
         // Determine the instruction name and type
         const {name, type} = this.getInstr(
