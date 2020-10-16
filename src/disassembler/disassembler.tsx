@@ -6,17 +6,23 @@ interface Instruction {
 
 export default class RiscVDisassembler {
     /**
-     * Disassemble an instruction
-     * @param instr - The hex instruction to disassemble
+     * Disassemble a hex or binary instruction
+     * @param instr - The instruction to disassemble
+     * @param radix - An integer between 2 and 36 specifying the base to use for representing numeric values
      */
-    static disassembleInstruction(instr: string): string {
-        if (instr.length !== 8) return "Please ensure that the instruction is 32 bits!";
+    static disassembleInstruction(instr: string, radix: number): string {
+        if (radix === 2) {
+            if (instr.length !== 32) return "Please ensure that the instruction is 32 bits!";
+        }
+        if (radix === 16) {
+            if (instr.length !== 8) return "Please ensure that the instruction is 32 bits!";
+        }
 
         // Read the instruction into a Uint32Array so we can easily interact with individual bits
         const instruction: Uint32Array = new Uint32Array(32);
         // TODO: Find better solution than just ts-ignore'ing the type error
         // @ts-ignore
-        instruction.set(Uint32Array.from((parseInt(instr, 16).toString(2)).padStart(32, '0')));
+        instruction.set(Uint32Array.from((parseInt(instr, radix).toString(2)).padStart(32, '0')));
 
         // Determine the instruction name and type
         const {name, type} = this.getInstr(
@@ -37,7 +43,11 @@ export default class RiscVDisassembler {
             const rd: string = 'x' + parseInt(instruction.subarray(20, 25).join(''), 2).toString(10);
             const rs1: string = 'x' + parseInt(instruction.subarray(12, 17).join(''), 2).toString(10);
             const imm: string = parseInt(instruction.subarray(0, 12).join(''), 2).toString(10);
-            command = `${name} ${rd}, ${rs1}, ${imm}`;
+            if (instruction.subarray(25, 32).join('') === '0000011') {
+                command = `${name} ${rd}, ${imm}(${rs1})`; // load instructions
+            } else {
+                command = `${name} ${rd}, ${rs1}, ${imm}`; // standard I-type
+            }
         } else if (type === 'S') {
             const rs1: string = 'x' + parseInt(instruction.subarray(12, 17).join(''), 2).toString(10);
             const rs2: string = 'x' + parseInt(instruction.subarray(7, 12).join(''), 2).toString(10);
