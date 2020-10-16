@@ -13,8 +13,10 @@ import disassembler from "./disassembler/disassembler";
 interface AppProps {}
 
 interface AppState {
-    instruction: string;
-    disassembled: string;
+    instructionHex: string;
+    disassembledHex: string;
+    instructionBin: string;
+    disassembledBin: string;
 }
 
 
@@ -25,17 +27,30 @@ export default class App extends React.Component<AppProps, AppState> {
       return (
           <div className="App">
               <Form>
-                  <Form.Label>Assembled Instruction</Form.Label>
+                  <Form.Label>Assembled Instruction (Hex)</Form.Label>
                   <InputGroup>
                       <InputGroup.Prepend>
                           <InputGroup.Text>0x</InputGroup.Text>
                       </InputGroup.Prepend>
-                      <FormControl onChange={(evt) => this.setState({instruction: evt.target.value})} />
+                      <FormControl onChange={(evt) => this.setState({instructionHex: evt.target.value})} />
                       <InputGroup.Append>
-                          <Button onClick={this.handleDisassemble}>Disassemble!</Button>
+                          <Button onClick={this.handleDisassembleHex}>Disassemble!</Button>
                       </InputGroup.Append>
                   </InputGroup>
-                  <Form.Text>{this.state.disassembled}</Form.Text>
+                  <Form.Text>{this.state.disassembledHex}</Form.Text>
+              </Form>
+              <Form>
+                  <Form.Label>Assembled Instruction (Binary)</Form.Label>
+                  <InputGroup>
+                      <InputGroup.Prepend>
+                          <InputGroup.Text>0b</InputGroup.Text>
+                      </InputGroup.Prepend>
+                      <FormControl onChange={(evt) => this.setState({instructionBin: evt.target.value})} />
+                      <InputGroup.Append>
+                          <Button onClick={this.handleDisassembleBin}>Disassemble!</Button>
+                      </InputGroup.Append>
+                  </InputGroup>
+                  <Form.Text>{this.state.disassembledBin}</Form.Text>
               </Form>
           </div>
       );
@@ -43,15 +58,23 @@ export default class App extends React.Component<AppProps, AppState> {
 
   constructor(props: {} | Readonly<{}>) {
       super(props);
-      this.handleDisassemble = this.handleDisassemble.bind(this);
+      this.handleDisassembleHex = this.handleDisassembleHex.bind(this);
+      this.handleDisassembleBin = this.handleDisassembleBin.bind(this);
       this.state = {
-          disassembled: '',
-          instruction: ''
+          disassembledHex: '',
+          instructionHex: '',
+          disassembledBin: '',
+          instructionBin: ''
       }
   }
 
-  handleDisassemble() {
-      const disassembled = disassembler.disassembleInstruction(this.state.instruction);
-      this.setState({disassembled});
+  handleDisassembleHex() {
+      const disassembledHex = disassembler.disassembleInstruction(this.state.instructionHex, 16);
+      this.setState({disassembledHex});
+  }
+
+  handleDisassembleBin() {
+    const disassembledBin = disassembler.disassembleInstruction(this.state.instructionBin, 2);
+    this.setState({disassembledBin});
   }
 }
