@@ -24,7 +24,7 @@ export default class Disassembler extends React.Component<DisassemblerProps, Dis
     render() {
         return (
             <div className="tool-container">
-                <Form>
+                <Form onSubmit={this.handleDisassemble}>
                     <Form.Label>Assembled Instruction</Form.Label>
                     <InputGroup>
                         <InputGroup.Prepend>
@@ -50,7 +50,8 @@ export default class Disassembler extends React.Component<DisassemblerProps, Dis
         }
     }
 
-    handleDisassemble() {
+    handleDisassemble(evt: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLElement>) {
+        evt.preventDefault();
         const disassembled = disassembler.disassembleInstruction(this.state.instruction);
         this.setState({disassembled});
     }
