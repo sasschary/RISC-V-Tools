@@ -1,7 +1,7 @@
-import {IInstr} from "../abstract/IInstr";
+import { IInstr } from '../abstract/IInstr';
 
 export default class CsrrsInstr extends IInstr {
-    readonly instruction = 'CSRRS';
-    readonly opcode = 0b1110011;
-    readonly funct3 = 0b010;
+  readonly instruction = 'CSRRS';
+  readonly opcode = 0b1110011;
+  readonly funct3 = 0b010;
 }
